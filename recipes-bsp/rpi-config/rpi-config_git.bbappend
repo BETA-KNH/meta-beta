@@ -1,0 +1,9 @@
+GPU_MEM = "128"
+
+
+
+VC4DTBO = "vc4-kms-v3d"
+VC4GRAPHICS = "1"
+
+ENABLE_UART = "1"
+RPI_USE_U_BOOT = "1"
