@@ -9,13 +9,16 @@ SRCREV = "v${PV}"
 
 S = "${WORKDIR}/git"
 
-inherit cmake pkgconfig
+inherit cmake pkgconfig python3native
 
 DEPENDS = " \
     ycm \
     zlib \
     sqlite3 \
     opencv \
+    lua \
+    python3 \
+    swig-native \
 "
 
 EXTRA_OECMAKE = " \
@@ -25,7 +28,9 @@ EXTRA_OECMAKE = " \
     -DYARP_COMPILE_EXAMPLES=OFF \
     -DYARP_COMPILE_CARRIER_PLUGINS=ON \
     -DYARP_COMPILE_DEVICE_PLUGINS=ON \
-    -DCREATE_PYTHON=OFF \
+    -DCREATE_PYTHON=ON \
+    -DYARP_USE_PYTHON_VERSION=3 \
+    -DYARP_PYTHON_INSTALL_DIR=${PYTHON_SITEPACKAGES_DIR} \
     -DYARP_FLOAT32_IS_IEC559=ON \
     -DYARP_FLOAT64_IS_IEC559=ON \
     -DYARP_FLOAT128_IS_IEC559=OFF \
@@ -46,6 +51,7 @@ FILES:${PN} += " \
     ${libdir}/libyarpmod.so \
     ${libdir}/libyarpcar.so \
     ${libdir}/libyarppm.so \
+    ${PYTHON_SITEPACKAGES_DIR}/* \
 "
 
 FILES:${PN}-dev += " \

@@ -4,6 +4,10 @@ LICENSE = "MIT"
 inherit packagegroup
 
 RDEPENDS:${PN} = "\
-    packagegroup-beta-python \
     networkmanager \
+    linux-firmware-rpidistro-bcm43455 \
+    i2c-tools \
+    tmux \
+    espeak \
+    ncurses-terminfo-base \
 "

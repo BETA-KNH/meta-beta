@@ -3,7 +3,7 @@ LICENSE = "MIT"
 inherit packagegroup
 
 RDEPENDS:${PN} = "\
-    python3 \
+    python3-core \
     python3-pip \
     python3-virtualenv \
     python3-setuptools \

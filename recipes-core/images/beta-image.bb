@@ -8,5 +8,8 @@ IMAGE_FEATURES += " \
 
 IMAGE_INSTALL += " \
     packagegroup-beta-essentials \
+    packagegroup-beta-ota \
+    packagegroup-beta-display \
+    packagegroup-beta-python \
     yarp \
 "

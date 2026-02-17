@@ -5,4 +5,7 @@ inherit packagegroup
 RDEPENDS:${PN} = "\
     packagegroup-qt6-essentials \
     qtwayland \
+    weston \
+    weston-init \
+    cage \
 "
