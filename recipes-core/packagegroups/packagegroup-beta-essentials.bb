@@ -5,6 +5,7 @@ inherit packagegroup
 
 RDEPENDS:${PN} = "\
     networkmanager \
+    avahi-daemon \
     linux-firmware-rpidistro-bcm43455 \
     i2c-tools \
     tmux \

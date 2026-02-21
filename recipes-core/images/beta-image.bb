@@ -13,3 +13,9 @@ IMAGE_INSTALL += " \
     packagegroup-beta-python \
     yarp \
 "
+
+# ROOTFS_POSTPROCESS_COMMAND += "create_update_marker;"
+
+# create_update_marker() {
+#     echo "System updated on $(date)" > ${IMAGE_ROOTFS}/etc/update-marker
+# }
