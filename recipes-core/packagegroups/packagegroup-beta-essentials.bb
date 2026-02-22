@@ -11,4 +11,5 @@ RDEPENDS:${PN} = "\
     tmux \
     espeak \
     ncurses-terminfo-base \
+    git \
 "
