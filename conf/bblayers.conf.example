@@ -1,0 +1,24 @@
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+# Replace /path/to/poky with the absolute path to your poky clone.
+BBLAYERS ?= " \
+  /path/to/poky/meta \
+  /path/to/poky/meta-poky \
+  /path/to/poky/meta-yocto-bsp \
+  /path/to/poky/meta-raspberrypi \
+  /path/to/poky/meta-beta \
+  /path/to/poky/meta-openembedded/meta-oe \
+  /path/to/poky/meta-openembedded/meta-python \
+  /path/to/poky/meta-openembedded/meta-multimedia \
+  /path/to/poky/meta-openembedded/meta-networking \
+  /path/to/poky/meta-rauc \
+  /path/to/poky/meta-qt6 \
+  /path/to/poky/meta-wayland \
+  /path/to/poky/meta-lts-mixins \
+  /path/to/poky/meta-rauc-community/meta-rauc-raspberrypi \
+  "

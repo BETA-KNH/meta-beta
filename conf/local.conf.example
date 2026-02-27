@@ -1,0 +1,37 @@
+# Example local.conf for building beta-os on Raspberry Pi 5
+# Copy this to your build/conf/local.conf and adjust the paths below.
+
+# --- Persistent storage paths (adjust to your machine) ---
+# Keeping DL_DIR and SSTATE_DIR on a large drive is strongly recommended.
+DL_DIR   = "/path/to/yocto/dl"
+SSTATE_DIR = "/path/to/yocto/sstate-cache"
+TMPDIR   = "/path/to/yocto/tmp"
+
+# --- Target ---
+MACHINE = "raspberrypi5"
+DISTRO  = "beta-os"
+
+# --- Development helpers ---
+# debug-tweaks: enables root login without password, useful during development.
+# Remove for production images.
+EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+
+USER_CLASSES ?= "buildstats"
+PATCHRESOLVE = "noop"
+
+# --- Disk space guards ---
+BB_DISKMON_DIRS ??= "\
+    STOPTASKS,${TMPDIR},1G,100K \
+    STOPTASKS,${DL_DIR},1G,100K \
+    STOPTASKS,${SSTATE_DIR},1G,100K \
+    STOPTASKS,/tmp,100M,100K \
+    HALT,${TMPDIR},100M,1K \
+    HALT,${DL_DIR},100M,1K \
+    HALT,${SSTATE_DIR},100M,1K \
+    HALT,/tmp,10M,1K"
+
+PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
+CONF_VERSION = "2"
+
+# Produce an uncompressed wic image (easier to flash with bmaptool / dd)
+IMAGE_FSTYPES = "tar.bz2 ext3 wic wic.bmap"

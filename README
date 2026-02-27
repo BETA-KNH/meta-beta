@@ -1,41 +1,165 @@
-This README file contains information on the contents of the meta-beta layer.
+meta-beta
+=========
 
-Please see the corresponding sections below for details.
+Yocto BSP and application layer for the Beta Humanoid Robot project.
+Targets Raspberry Pi with a dual A/B RAUC OTA update layout (scarthgap / Yocto 5.0 LTS).
 
 Dependencies
 ============
 
-  URI: <first dependency>
-  branch: <branch name>
+  URI:    https://github.com/yoctoproject/poky
+  branch: scarthgap
 
-  URI: <second dependency>
-  branch: <branch name>
+  URI:    https://github.com/agherzan/meta-raspberrypi
+  branch: scarthgap
 
-  .
-  .
-  .
+  URI:    https://github.com/rauc/meta-rauc
+  branch: scarthgap
 
-Patches
-=======
-
-Please submit any patches against the meta-beta layer to the xxxx mailing list (xxxx@zzzz.org)
-and cc: the maintainer:
-
-Maintainer: XXX YYYYYY <xxx.yyyyyy@zzzzz.com>
+  URI:    https://github.com/jansa/meta-swupdate (or meta-rauc-community for wks)
+  branch: scarthgap
 
 Table of Contents
 =================
 
-  I. Adding the meta-beta layer to your build
- II. Misc
+  I.   Adding the meta-beta layer to your build
+ II.   local.conf and bblayers.conf
+ III.  Required files not tracked in git
+ IV.   WiFi connection profiles
+ V.    RAUC signing keys
 
 
 I. Adding the meta-beta layer to your build
-=================================================
+============================================
 
-Run 'bitbake-layers add-layer meta-beta'
+  Run 'bitbake-layers add-layer meta-beta'
 
-II. Misc
-========
+  Distro: set DISTRO = "beta-os" in your local.conf or site.conf.
 
---- replace with specific information about the meta-beta layer ---
+
+II. local.conf and bblayers.conf
+==================================
+
+  Example configuration files are provided in conf/:
+
+    conf/local.conf.example    — build settings (machine, distro, paths)
+    conf/bblayers.conf.example — layer stack
+
+  Copy both to your build directory and adjust the paths:
+
+    cp meta-beta/conf/local.conf.example    build/conf/local.conf
+    cp meta-beta/conf/bblayers.conf.example build/conf/bblayers.conf
+
+  In bblayers.conf.example replace every occurrence of /path/to/poky with the
+  absolute path to your poky clone. All required layers are listed:
+
+    meta-raspberrypi, meta-openembedded (oe, python, multimedia, networking),
+    meta-rauc, meta-rauc-community/meta-rauc-raspberrypi,
+    meta-qt6, meta-wayland, meta-lts-mixins
+
+  In local.conf.example set DL_DIR, SSTATE_DIR, and TMPDIR to directories on a
+  large drive (~50 GB free for TMPDIR per clean build is recommended).
+
+  Key settings:
+
+    MACHINE    = "raspberrypi5"
+    DISTRO     = "beta-os"
+
+  Note: EXTRA_IMAGE_FEATURES includes "debug-tweaks" (passwordless root login).
+  Remove this for production images.
+
+
+III. Required files not tracked in git
+=======================================
+
+Several files containing credentials or private keys are excluded from version
+control via .gitignore. They must be created manually before building.
+
+
+  1. WiFi connection profiles
+  ----------------------------
+  Location: recipes-core/networking/files/
+
+  All *.nmconnection files are gitignored. You must create each profile by hand.
+  See Section III for the expected format and list of profiles.
+
+
+  2. RAUC signing keys
+  ---------------------
+  Location: files/rauc-keys/
+
+  All *.pem files in this directory are gitignored. The build requires:
+
+    files/rauc-keys/development-1.key.pem   — private key used to sign OTA bundles
+    files/rauc-keys/development-1.cert.pem  — certificate paired with the key above
+
+  The CA certificate used by the target to verify bundles is committed and lives at:
+
+    recipes-core/rauc/files/ca.cert.pem     — already tracked in git (no action needed)
+
+  To generate a self-signed development keypair:
+
+    openssl req -x509 -newkey rsa:4096 -days 3650 -nodes \
+        -keyout files/rauc-keys/development-1.key.pem \
+        -out    files/rauc-keys/development-1.cert.pem \
+        -subj "/CN=beta-rauc-dev"
+
+  For production builds, place the production key/cert under the same directory
+  and update RAUC_KEY_FILE / RAUC_CERT_FILE in recipes-core/bundles/update-bundle.bb.
+  Production artifacts matching rauc-prod.* are also gitignored.
+
+
+IV. WiFi connection profiles
+==============================
+
+  Profiles are NetworkManager keyfiles installed to:
+    /etc/NetworkManager/system-connections/
+
+  They are managed via:
+    recipes-core/networking/networkmanager_%.bbappend
+    recipes-core/networking/files/
+
+  Each profile must be added to SRC_URI, do_install, and FILES in the bbappend.
+
+  Currently configured profiles (all must be created manually — gitignored):
+
+    my-wifi-dhcp.nmconnection   — primary network
+    pixel-4627.nmconnection     — mobile hotspot (backup)
+    androidapkhg.nmconnection   — mobile hotspot (backup)
+
+  Profile template (save as <name>.nmconnection):
+
+    [connection]
+    id=<id>
+    type=wifi
+    autoconnect=true
+    permissions=
+
+    [wifi]
+    mode=infrastructure
+    ssid=<SSID>
+
+    [wifi-security]
+    key-mgmt=wpa-psk
+    psk=<password>
+
+    [ipv4]
+    method=auto
+
+    [ipv6]
+    method=auto
+
+    [proxy]
+
+  To add a new network, create the profile file, then in
+  recipes-core/networking/networkmanager_%.bbappend:
+    1. Add  file://<name>.nmconnection  to SRC_URI
+    2. Add  install -m 0600 ...  line in do_install:append()
+    3. Add  ${sysconfdir}/NetworkManager/system-connections/<name>.nmconnection  to FILES:${PN}
+
+
+V. RAUC signing keys
+======================
+
+  See Section II for key generation. The bundle recipe that references the keys is:
+    recipes-core/bundles/update-bundle.bb

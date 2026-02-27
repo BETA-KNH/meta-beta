@@ -9,5 +9,6 @@ RDEPENDS:${PN} = "\
     python3-setuptools \
     python3-wheel \
     python3-numpy \
+    python3-pyserial \
     opencv \
 "
