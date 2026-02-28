@@ -12,4 +12,5 @@ RDEPENDS:${PN} = "\
     espeak \
     ncurses-terminfo-base \
     git \
+    tailscale \
 "
