@@ -7,17 +7,115 @@ Targets Raspberry Pi with a dual A/B RAUC OTA update layout (scarthgap / Yocto 5
 Dependencies
 ============
 
-  URI:    https://github.com/yoctoproject/poky
-  branch: scarthgap
+The image currently builds with the following repositories and branches
+according to the active build/conf/bblayers.conf.
 
-  URI:    https://github.com/agherzan/meta-raspberrypi
-  branch: scarthgap
+  1. poky
+  -------
+  Repository: https://git.yoctoproject.org/poky
+  Branch:     scarthgap
+  Clone:      git clone -b scarthgap git://git.yoctoproject.org/poky
+  Layers used from this repo:
+    - meta
+    - meta-poky
+    - meta-yocto-bsp
 
-  URI:    https://github.com/rauc/meta-rauc
-  branch: scarthgap
+  2. meta-beta
+  ------------
+  Repository: https://github.com/BETA-KNH/meta-beta
+  Branch:     main
+  Clone:      git clone -b main https://github.com/BETA-KNH/meta-beta.git
+  Layers used from this repo:
+    - meta-beta
 
-  URI:    https://github.com/jansa/meta-swupdate (or meta-rauc-community for wks)
-  branch: scarthgap
+  3. meta-raspberrypi
+  -------------------
+  Repository: https://git.yoctoproject.org/meta-raspberrypi
+  Branch:     scarthgap
+  Clone:      git clone -b scarthgap git://git.yoctoproject.org/meta-raspberrypi
+  Layers used from this repo:
+    - meta-raspberrypi
+
+  4. meta-openembedded
+  --------------------
+  Repository: https://git.openembedded.org/meta-openembedded
+  Branch:     scarthgap
+  Clone:      git clone -b scarthgap git://git.openembedded.org/meta-openembedded
+  Layers used from this repo:
+    - meta-openembedded/meta-oe
+    - meta-openembedded/meta-python
+    - meta-openembedded/meta-multimedia
+    - meta-openembedded/meta-networking
+
+  5. meta-rauc
+  ------------
+  Repository: https://github.com/rauc/meta-rauc
+  Branch:     scarthgap
+  Clone:      git clone -b scarthgap https://github.com/rauc/meta-rauc.git
+  Layers used from this repo:
+    - meta-rauc
+
+  6. meta-rauc-community
+  ----------------------
+  Repository: https://github.com/rauc/meta-rauc-community
+  Branch:     scarthgap
+  Clone:      git clone -b scarthgap https://github.com/rauc/meta-rauc-community.git
+  Layers used from this repo:
+    - meta-rauc-community/meta-rauc-raspberrypi
+
+  7. meta-qt6
+  -----------
+  Repository: https://code.qt.io/yocto/meta-qt6.git
+  Branch:     dev
+  Clone:      git clone -b dev git://code.qt.io/yocto/meta-qt6.git
+  Layers used from this repo:
+    - meta-qt6
+
+  8. meta-wayland
+  ---------------
+  Repository: https://codeberg.org/flk/meta-wayland.git
+  Branch:     scarthgap
+  Clone:      git clone -b scarthgap https://codeberg.org/flk/meta-wayland.git
+  Layers used from this repo:
+    - meta-wayland
+
+  9. meta-clang
+  -------------
+  Repository: https://github.com/kraj/meta-clang
+  Branch:     scarthgap
+  Clone:      git clone -b scarthgap https://github.com/kraj/meta-clang.git
+  Layers used from this repo:
+    - meta-clang
+
+  10. meta-browser
+  ----------------
+  Repository: https://github.com/OSSystems/meta-browser
+  Branch:     scarthgap
+  Clone:      git clone -b scarthgap https://github.com/OSSystems/meta-browser.git
+  Layers used from this repo:
+    - meta-browser/meta-chromium
+
+  11. meta-lts-mixins (u-boot)
+  ----------------------------
+  Repository: https://git.yoctoproject.org/meta-lts-mixins
+  Branch:     scarthgap/u-boot
+  Clone:      git clone -b scarthgap/u-boot git://git.yoctoproject.org/meta-lts-mixins meta-lts-mixins
+  Layers used from this repo:
+    - meta-lts-mixins
+
+  12. meta-lts-mixins (rust)
+  --------------------------
+  Repository: https://git.yoctoproject.org/meta-lts-mixins
+  Branch:     scarthgap/rust
+  Clone:      git clone -b scarthgap/rust git://git.yoctoproject.org/meta-lts-mixins meta-lts-mixins-rust
+  Layers used from this repo:
+    - meta-lts-mixins-rust
+
+  Notes:
+    - build/workspace may appear in bblayers.conf when using devtool. It is
+      generated locally and is not a repository you clone.
+    - Chromium support in this project comes from meta-browser/meta-chromium.
+    - The rust mixin checkout is required by the Chromium layer on scarthgap.
 
 Table of Contents
 =================
@@ -55,7 +153,8 @@ II. local.conf and bblayers.conf
 
     meta-raspberrypi, meta-openembedded (oe, python, multimedia, networking),
     meta-rauc, meta-rauc-community/meta-rauc-raspberrypi,
-    meta-qt6, meta-wayland, meta-lts-mixins
+    meta-qt6, meta-wayland, meta-lts-mixins, meta-clang,
+    meta-lts-mixins-rust, meta-browser/meta-chromium
 
   In local.conf.example set DL_DIR, SSTATE_DIR, and TMPDIR to directories on a
   large drive (~50 GB free for TMPDIR per clean build is recommended).

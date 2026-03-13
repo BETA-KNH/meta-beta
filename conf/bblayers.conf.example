@@ -20,5 +20,8 @@ BBLAYERS ?= " \
   /path/to/poky/meta-qt6 \
   /path/to/poky/meta-wayland \
   /path/to/poky/meta-lts-mixins \
+  /path/to/poky/meta-clang \
+  /path/to/poky/meta-lts-mixins-rust \
+  /path/to/poky/meta-browser/meta-chromium \
   /path/to/poky/meta-rauc-community/meta-rauc-raspberrypi \
   "
