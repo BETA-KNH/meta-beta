@@ -1,6 +1,9 @@
 
 require recipes-core/images/core-image-base.bb
 
+inherit extrausers
+EXTRA_USERS_PARAMS = "usermod -p '\$6\$2QleNSSNKe5VUhuq\$JwllvN6hj6xBOmn5mFyxrEc01boiUP0ow45BVGQChEQ2W8GNXqMJEqczrsWnT9dDRVtHG2gdiPIIHQtMs.9ZQ.' root;"
+
 
 IMAGE_FEATURES += " \
     ssh-server-dropbear \
