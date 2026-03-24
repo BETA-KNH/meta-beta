@@ -16,6 +16,7 @@ IMAGE_INSTALL += " \
     packagegroup-beta-display \
     packagegroup-beta-python \
     packagegroup-beta-robotics \
+    packagegroup-beta-dev \
 "
 
 # ROOTFS_POSTPROCESS_COMMAND += "create_update_marker;"

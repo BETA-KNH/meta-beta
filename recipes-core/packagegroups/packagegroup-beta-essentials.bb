@@ -13,4 +13,7 @@ RDEPENDS:${PN} = "\
     ncurses-terminfo-base \
     git \
     tailscale \
+    flatpak \
+    chrony \
+    tzdata \
 "

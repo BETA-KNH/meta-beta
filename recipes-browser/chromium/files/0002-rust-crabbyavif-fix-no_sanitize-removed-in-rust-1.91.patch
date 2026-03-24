@@ -1,0 +1,62 @@
+From 6d34721f0af51f554166f3df9be7d8d98a8f6d4d Mon Sep 17 00:00:00 2001
+From: Meta Beta Maintainer <noreply@example.com>
+Date: Wed, 19 Mar 2026 00:00:00 +0000
+Subject: [PATCH] rust: crabbyavif: drop obsolete no_sanitize attributes
+
+Rust 1.91 removed `feature(no_sanitize)` and the `no_sanitize(...)`
+attribute syntax. Chromium's rust invocation here still restricts allowed
+unstable features to `no_sanitize`, so switching to `sanitize` fails too.
+
+Drop these cfg-gated attributes to keep this build path compiling.
+
+Upstream-Status: Pending
+
+---
+ third_party/crabbyavif/src/src/capi/io.rs          | 1 -
+ third_party/crabbyavif/src/src/lib.rs              | 1 -
+ third_party/crabbyavif/src/src/reformat/libyuv.rs  | 2 --
+ 3 files changed, 4 deletions(-)
+
+diff --git a/third_party/crabbyavif/src/src/lib.rs b/third_party/crabbyavif/src/src/lib.rs
+index 74f7fd730f9a..72c9694fa8f5 100644
+--- a/third_party/crabbyavif/src/src/lib.rs
++++ b/third_party/crabbyavif/src/src/lib.rs
+@@ -14,4 +14,3 @@
+ #![deny(unsafe_op_in_unsafe_fn)]
+-#![cfg_attr(feature = "disable_cfi", feature(no_sanitize))]
+ 
+ #[macro_use]
+diff --git a/third_party/crabbyavif/src/src/capi/io.rs b/third_party/crabbyavif/src/src/capi/io.rs
+index b0f142f33f15..9506a2d9af50 100644
+--- a/third_party/crabbyavif/src/src/capi/io.rs
++++ b/third_party/crabbyavif/src/src/capi/io.rs
+@@ -172,7 +172,6 @@ impl avifIOWrapper {
+ }
+ 
+ impl crate::decoder::IO for avifIOWrapper {
+-    #[cfg_attr(feature = "disable_cfi", no_sanitize(cfi))]
+     fn read(&mut self, offset: u64, size: usize) -> AvifResult<&[u8]> {
+         let res = unsafe {
+             (self.io.read)(
+diff --git a/third_party/crabbyavif/src/src/reformat/libyuv.rs b/third_party/crabbyavif/src/src/reformat/libyuv.rs
+index 63fcf7806834..7f77f53648e5 100644
+--- a/third_party/crabbyavif/src/src/reformat/libyuv.rs
++++ b/third_party/crabbyavif/src/src/reformat/libyuv.rs
+@@ -367,7 +367,6 @@ fn find_conversion_function(
+     }
+ }
+ 
+-#[cfg_attr(feature = "disable_cfi", no_sanitize(cfi))]
+ pub(crate) fn yuv_to_rgb(image: &image::Image, rgb: &mut rgb::Image) -> AvifResult<bool> {
+     if (rgb.depth != 8 && rgb.depth != 10) || !image.depth_valid() {
+         return Err(AvifError::NotImplemented);
+@@ -823,7 +822,6 @@ fn rgb_to_yuv_conversion_function(
+     }
+ }
+ 
+-#[cfg_attr(feature = "disable_cfi", no_sanitize(cfi))]
+ pub(crate) fn rgb_to_yuv(rgb: &rgb::Image, image: &mut image::Image) -> AvifResult<()> {
+     let conversion_function = rgb_to_yuv_conversion_function(rgb, image)?;
+     let plane_u8 = image.plane_ptrs_mut();
+-- 
+2.48.1

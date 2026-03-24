@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Local Build Fix <local@meta-beta>
+Date: Sun, 15 Mar 2026 00:00:00 +0000
+Subject: [PATCH] openat2: use const open_how pointer
+
+Recent glibc headers declare openat2() as:
+
+  int openat2(int, const char *, const struct open_how *, size_t)
+
+Pseudo's wrapper input used a non-const open_how pointer, which generated
+conflicting prototypes and breaks pseudo-native compilation on newer hosts.
+
+Align the wrapper declaration with glibc by making the parameter const.
+
+Upstream-Status: Pending
+
+Signed-off-by: Local Build Fix <local@meta-beta>
+---
+ ports/linux/openat2/wrapfuncs.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ports/linux/openat2/wrapfuncs.in b/ports/linux/openat2/wrapfuncs.in
+index de95cf1..5af8478 100644
+--- a/ports/linux/openat2/wrapfuncs.in
++++ b/ports/linux/openat2/wrapfuncs.in
+@@ -1 +1 @@
+-int openat2(int dirfd, const char *path, struct open_how *how, size_t size);
++int openat2(int dirfd, const char *path, const struct open_how *how, size_t size);
+-- 
+2.34.1

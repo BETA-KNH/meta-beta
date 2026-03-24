@@ -8,7 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 # Only compatible with aarch64 (Raspberry Pi 5)
 COMPATIBLE_HOST = "aarch64.*-linux"
 
-SRC_URI = "https://pkgs.tailscale.com/stable/tailscale_${PV}_arm64.tgz;subdir=${BP}"
+SRC_URI = "https://pkgs.tailscale.com/stable/tailscale_${PV}_arm64.tgz;subdir=${BP} \
+           file://tailscale.conf"
 SRC_URI[sha256sum] = "76300e808c57eb7853090d69c8bd8806e86341862e244183f6611f9105799bba"
 
 S = "${WORKDIR}/${BP}/tailscale_${PV}_arm64"
@@ -39,8 +40,14 @@ do_install() {
     install -d ${D}${sysconfdir}/default
     install -m 0644 ${S}/systemd/tailscaled.defaults ${D}${sysconfdir}/default/tailscaled
 
-    # State directory
-    install -d ${D}${localstatedir}/lib/tailscale
+    # Ensure tailscaled state persists across RAUC A/B rootfs updates.
+    # Keep default path (/var/lib/tailscale) but redirect it to /data.
+    install -d ${D}${localstatedir}/lib
+    ln -snf /data/tailscale ${D}${localstatedir}/lib/tailscale
+
+    # Create persistent state directory at boot.
+    install -d ${D}${nonarch_libdir}/tmpfiles.d
+    install -m 0644 ${WORKDIR}/tailscale.conf ${D}${nonarch_libdir}/tmpfiles.d/tailscale.conf
 }
 
 FILES:${PN} = " \
@@ -49,4 +56,5 @@ FILES:${PN} = " \
     ${systemd_system_unitdir}/tailscaled.service \
     ${sysconfdir}/default/tailscaled \
     ${localstatedir}/lib/tailscale \
+    ${nonarch_libdir}/tmpfiles.d/tailscale.conf \
 "

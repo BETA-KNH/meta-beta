@@ -4,8 +4,6 @@ SRC_URI += "file://my-wifi-dhcp.nmconnection \
            file://pixel-4627.nmconnection \
            file://androidapkhg.nmconnection"
 
-hostname:pn-base-files = "beta-robot"
-
 # Enable nmtui text interface and systemd integration
 PACKAGECONFIG:append = " nmcli nmtui systemd"
 

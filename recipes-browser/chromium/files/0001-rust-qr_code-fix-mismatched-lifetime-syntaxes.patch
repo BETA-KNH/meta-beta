@@ -1,0 +1,45 @@
+From 4a8da0f8574a1f11fbe0dd8ebf2516643d0cc800 Mon Sep 17 00:00:00 2001
+From: Meta Beta Maintainer <noreply@example.com>
+Date: Wed, 18 Mar 2026 00:00:00 +0000
+Subject: [PATCH] rust: qr_code-v2: fix mismatched lifetime syntaxes
+
+`qr_code-v2` is built with `#![deny(warnings)]` and fails with newer Rust
+because two return types hide an elided lifetime.
+
+Make both lifetimes explicit using `'_`.
+
+Upstream-Status: Pending
+
+---
+ .../rust/chromium_crates_io/vendor/qr_code-v2/src/lib.rs          | 2 +-
+ .../rust/chromium_crates_io/vendor/qr_code-v2/src/optimize.rs     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/third_party/rust/chromium_crates_io/vendor/qr_code-v2/src/lib.rs b/third_party/rust/chromium_crates_io/vendor/qr_code-v2/src/lib.rs
+index 438154f69f7c..5841418e1ebf 100644
+--- a/third_party/rust/chromium_crates_io/vendor/qr_code-v2/src/lib.rs
++++ b/third_party/rust/chromium_crates_io/vendor/qr_code-v2/src/lib.rs
+@@ -216,7 +216,7 @@ impl QrCode {
+     }
+
+     /// Returns an iterator over QR code vector of colors.
+-    pub fn iter(&self) -> QrCodeIterator {
++    pub fn iter(&self) -> QrCodeIterator<'_> {
+         QrCodeIterator::new(self)
+     }
+
+diff --git a/third_party/rust/chromium_crates_io/vendor/qr_code-v2/src/optimize.rs b/third_party/rust/chromium_crates_io/vendor/qr_code-v2/src/optimize.rs
+index b746f00f4e42..d5e3c39df6f1 100644
+--- a/third_party/rust/chromium_crates_io/vendor/qr_code-v2/src/optimize.rs
++++ b/third_party/rust/chromium_crates_io/vendor/qr_code-v2/src/optimize.rs
+@@ -109,7 +109,7 @@ impl<'a> Parser<'a> {
+     ///                                Segment { mode: Numeric, begin: 3, end: 6 },
+     ///                                Segment { mode: Byte, begin: 6, end: 10 }]);
+     ///
+-    pub fn new(data: &[u8]) -> Parser {
++    pub fn new(data: &[u8]) -> Parser<'_> {
+         Parser {
+             ecs_iter: EcsIter {
+                 base: data.iter(),
+-- 
+2.48.1
